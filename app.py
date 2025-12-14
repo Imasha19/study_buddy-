@@ -120,6 +120,17 @@ if 'quiz_attempts' not in st.session_state:
     st.session_state.quiz_attempts = []
 if 'current_session' not in st.session_state:
     st.session_state.current_session = None
+# Ensure last results and current text are initialized to avoid KeyError when rendering
+if 'last_quiz' not in st.session_state:
+    st.session_state.last_quiz = ''
+if 'last_explanation' not in st.session_state:
+    st.session_state.last_explanation = ''
+if 'last_session_data' not in st.session_state:
+    st.session_state.last_session_data = None
+if 'current_text' not in st.session_state:
+    st.session_state.current_text = ''
+if 'show_results_notice' not in st.session_state:
+    st.session_state.show_results_notice = False
 
 # Page config
 st.set_page_config(
@@ -368,13 +379,16 @@ elif explain_only and user_text.strip():
 
 # Results Tab
 with tab2:
+    if st.session_state.get('show_results_notice'):
+        st.info("Session details loaded — open the Results tab or refresh to view them.")
+        st.session_state.show_results_notice = False
     if 'last_explanation' in st.session_state:
         st.markdown("### 📋 Generated Content")
         
         # Export option at top
         export_col1, export_col2 = st.columns([3, 1])
         with export_col2:
-            formatted_quiz = format_quiz_as_points(st.session_state.last_quiz)
+            formatted_quiz = format_quiz_as_points(st.session_state.get('last_quiz', ''))
             export_content = f"""AI STUDY BUDDY - STUDY SESSION
 {'='*40}
 
@@ -433,8 +447,11 @@ QUIZ QUESTIONS ({quiz_difficulty} Level):
         
         with result_tab2:
             st.markdown(f"#### 🧠 Quiz ({quiz_difficulty} Level)")
-            formatted = format_quiz_as_points(st.session_state.last_quiz)
-            st.markdown(formatted)
+            formatted = format_quiz_as_points(st.session_state.get('last_quiz', ''))
+            if formatted:
+                st.markdown(formatted)
+            else:
+                st.info("No quiz generated yet. Click 'Generate Explanation & Quiz' to create one.")
             
             st.divider()
             st.markdown("#### 🛠️ Quiz Tools")
@@ -549,7 +566,17 @@ with tab3:
                             st.session_state.current_text = session['text']
                             st.session_state.last_explanation = session.get('explanation')
                             st.session_state.last_quiz = session.get('quiz')
-                            st.switch_page("Results")
+                            try:
+                                st.switch_page("Results")
+                            except Exception:
+                                # Fallback: set a notice and keep data loaded for the Results tab
+                                st.session_state.show_results_notice = True
+                                # `st.experimental_rerun()` may not exist in all Streamlit versions; avoid AttributeError
+                                try:
+                                    st.experimental_rerun()
+                                except Exception:
+                                    # If rerun isn't available, simply continue; the notice will appear on the Results tab
+                                    pass
                     
                     with btn_col2:
                         if st.button(f"🗑️ Delete", key=f"delete_{i}"):
