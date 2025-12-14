@@ -1,3 +1,5 @@
 streamlit==1.52.1
 groq
 python-dotenv
+Pillow
+plotly
