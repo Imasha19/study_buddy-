@@ -1,0 +1,75 @@
+# Virtual envs
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Byte-compiled / optimized
+*.so
+
+# Build / packaging
+build/
+dist/
+*.egg-info/
+pip-wheel-metadata/
+
+# Test / coverage
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+
+# IDEs / editors
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets / env
+.env
+.env.*
+.env.local
+
+# Caches
+.cache/
+.mypy_cache/
+.python-version
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Large data / model files
+data/
+datasets/
+models/
+checkpoints/
+*.ckpt
+*.pt
+*.pth
+*.onnx
+*.h5
+*.bin
+
+# Databases
+*.sqlite3
+*.db
+
+# Logs
+*.log
+logs/
+
+# Misc
+node_modules/
+.terraform/
+
+# If you use Git LFS instead, keep placeholders here
+# *.large
